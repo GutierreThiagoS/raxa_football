@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:football/framework/controller/include_player_team_controller.dart';
+import 'package:football/controller/include_player_team_controller.dart';
 import 'package:football/framework/views/include_player_team/item_player_in_team.dart';
 
 class IncludePlayerInTeam extends StatefulWidget {

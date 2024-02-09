@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:football/controller/include_player_team_controller.dart';
 import 'package:football/framework/components/outlined_text_filed.dart';
-import 'package:football/framework/controller/include_player_team_controller.dart';
 
 class CreateFootballPlayer extends StatefulWidget {
   const CreateFootballPlayer({super.key});
