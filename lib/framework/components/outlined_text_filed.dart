@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class OutlinedTextFiled extends StatelessWidget {
+class OutlinedTextFiled extends StatefulWidget {
   final String labelText;
   final String? hintText;
   final IconData? prefixIcon;
@@ -16,16 +16,21 @@ class OutlinedTextFiled extends StatelessWidget {
   });
 
   @override
+  State<OutlinedTextFiled> createState() => _OutlinedTextFiledState();
+}
+
+class _OutlinedTextFiledState extends State<OutlinedTextFiled> {
+  @override
   Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-        suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
-        labelText: labelText,
-        hintText: hintText,
-        border: OutlineInputBorder(),
+        prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
+        suffixIcon: widget.suffixIcon != null ? Icon(widget.suffixIcon) : null,
+        labelText: widget.labelText,
+        hintText: widget.hintText,
+        border: const OutlineInputBorder(),
       ),
-      onChanged: onChanged,
+      onChanged: widget.onChanged,
     );
   }
 }

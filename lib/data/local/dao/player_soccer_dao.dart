@@ -8,9 +8,18 @@ abstract class PlayerSoccerDao {
   @insert
   Future<int> insertItem(PlayerSoccer item);
 
-  @insert
-  Future<List<int>> insertAll(List<PlayerSoccer> players);
+  @update
+  Future<int> updateItem(PlayerSoccer item);
 
   @Query('SELECT * FROM PlayerSoccer')
   Future<List<PlayerSoccer>> getAll();
+
+  @Query('SELECT * FROM PlayerSoccer WHERE idTeam = -1')
+  Future<List<PlayerSoccer>> getAllNotTeam();
+
+  @Query('SELECT * FROM PlayerSoccer WHERE name = :name')
+  Future<List<PlayerSoccer>> getAllInName(String name);
+
+  @Query('SELECT * FROM PlayerSoccer WHERE idTeam = :team')
+  Future<List<PlayerSoccer>> getAllInTeam(int team);
 }

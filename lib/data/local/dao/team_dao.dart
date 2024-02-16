@@ -8,9 +8,15 @@ abstract class TeamDao {
   @insert
   Future<int> insertItem(Team team);
 
-  @insert
-  Future<List<int>> insertAll(List<Team> teams);
+  @update
+  Future<int> updateItem(Team team);
 
   @Query('SELECT * FROM Team')
   Future<List<Team>> getAll();
+
+  @Query('SELECT * FROM Team WHERE name = :name')
+  Future<List<Team>> getTeamInName(String name);
+
+  @Query('SELECT * FROM Team WHERE id IN (:teams)')
+  Future<List<Team>> getTeamInGame(List<int> teams);
 }

@@ -1,9 +1,12 @@
+
 import 'package:flutter/material.dart';
+import 'package:football/domain/models_entity/team.dart';
 import 'package:football/framework/components/outlined_text_filed.dart';
 
 class ItemTeam extends StatefulWidget {
-  final String label;
-  const ItemTeam({super.key, required this.label});
+  final Team team;
+  final Function(Team) saveTeam;
+  const ItemTeam({super.key, required this.team, required this.saveTeam});
 
   @override
   State<ItemTeam> createState() => _ItemTeamState();
@@ -11,7 +14,12 @@ class ItemTeam extends StatefulWidget {
 
 class _ItemTeamState extends State<ItemTeam> {
 
-  ValueNotifier<bool> isEdit = new ValueNotifier<bool>(false);
+  void onChange(String value) {
+    print("VALUE $value");
+    widget.team.name = value;
+  }
+
+  ValueNotifier<bool> isEdit = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +35,13 @@ class _ItemTeamState extends State<ItemTeam> {
               Expanded(
                 child: OutlinedTextFiled(
                   labelText: "Editar Time",
-                  hintText: widget.label,
-                  onChanged: (value) {
-
-                  },
+                  hintText: widget.team.name,
+                  onChanged: onChange,
                 ),
               ),
               IconButton(onPressed: () {
+                print("widget.team ${widget.team}");
+                widget.saveTeam(widget.team);
                 isEdit.value = false;
               }, icon: Icon(Icons.save))
             ],
@@ -43,7 +51,7 @@ class _ItemTeamState extends State<ItemTeam> {
             children: [
               Expanded(
                 child: Text(
-                  widget.label,
+                  widget.team.name,
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
@@ -51,7 +59,9 @@ class _ItemTeamState extends State<ItemTeam> {
                   ),
                 ),
               ),
-              IconButton(onPressed: () => isEdit.value = true, icon: Icon(Icons.edit_outlined))
+              IconButton(onPressed: () {
+                isEdit.value = true;
+              }, icon: Icon(Icons.edit_outlined))
             ],
           );
         }

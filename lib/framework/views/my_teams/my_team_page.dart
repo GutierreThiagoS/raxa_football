@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:football/controller/my_team_controller.dart';
+import 'package:football/data/repository/team_repository_impl.dart';
 import 'package:football/framework/views/my_teams/item_team.dart';
 
 class MyTeamsPage extends StatefulWidget {
@@ -10,7 +12,13 @@ class MyTeamsPage extends StatefulWidget {
 
 class _MyTeamsPageState extends State<MyTeamsPage> {
 
-  final list = ["time 1", "time 2"];
+  final controller = MyTeamController(TeamRepositoryImpl());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.getTeamList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +39,24 @@ class _MyTeamsPageState extends State<MyTeamsPage> {
 
             ),
           ),
-          ListView.separated(
-              shrinkWrap: true,
-              itemBuilder: (_, index) {
-                return ItemTeam(label: list[index]);
-              },
-              separatorBuilder: (_, __) => const Divider(),
-              itemCount: list.length
-          )
+          SizedBox(height: 10),
+          ValueListenableBuilder(
+            valueListenable: controller.teamList,
+            builder:(context, value, child) => ListView.separated(
+                shrinkWrap: true,
+                itemBuilder: (_, index) {
+                  return ItemTeam(team: value[index], saveTeam: (value) {
+                    controller.saveTeam(value, index);
+                  });
+                },
+                separatorBuilder: (_, __) => const Divider(),
+                itemCount: value.length
+            ),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(onPressed: () {
+
+          }, child: Text("NOVO"))
         ],
       ),
     );

@@ -1,8 +1,18 @@
 
+import 'package:football/domain/repository/game_repository.dart';
+import 'package:football/domain/repository/team_repository.dart';
+
 class SplashController {
 
-  Future<void> syncData() async {
+  final GameRepository _gameRepository;
+  final TeamRepository _teamRepository;
 
+  SplashController(this._gameRepository, this._teamRepository);
+
+  Future<void> syncData() async {
+    await _teamRepository.getAllTeam();
+    await _gameRepository.getGameData();
+    await _gameRepository.getPlayerSoccer();
   }
 
 }

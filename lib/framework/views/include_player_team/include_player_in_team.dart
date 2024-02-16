@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:football/controller/include_player_team_controller.dart';
+import 'package:football/controller/my_team_controller.dart';
+import 'package:football/data/repository/player_soccer_repository_impl.dart';
+import 'package:football/data/repository/team_repository_impl.dart';
+import 'package:football/domain/models_entity/team.dart';
 import 'package:football/framework/views/include_player_team/item_player_in_team.dart';
 
 class IncludePlayerInTeam extends StatefulWidget {
   const IncludePlayerInTeam({super.key});
 
   @override
-  State<
-IncludePlayerInTeam> createState() => _IncludePlayerInTeamState();
+  State<IncludePlayerInTeam> createState() => _IncludePlayerInTeamState();
 }
 
 class _IncludePlayerInTeamState extends State<IncludePlayerInTeam> {
 
-  final controller = IncludePlayerTeamController();
-  final players = ["jogador 1", "jogador 2", "jogador 3", "jogador 4", "jogador 5", "jogador 6", "jogador7", "jogador 8", "jogador 9", "jogador 10", "jogador 11", "jogador 12"];
+  final controller = IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
+  final controllerTeam = MyTeamController(TeamRepositoryImpl());
+
+  List<Team> teams = [Team(name: "Sem time")];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.wait([
+      controllerTeam.getTeamListAsync()
+    ]).then((value) {
+      setState(() {
+        teams.addAll(value[0]);
+      });
+    });
+    controller.getAllPlayers();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,18 +49,25 @@ class _IncludePlayerInTeamState extends State<IncludePlayerInTeam> {
                 letterSpacing: 2,
                 color: Colors.white
               ),
-
             ),
           ),
           Expanded(
-            child: ListView.separated(
-                itemBuilder: (_, index) {
-                  return ItemPlayerInTeam(player: players[index]);
-                }, 
-                separatorBuilder: (_, __) => Divider(), 
-                itemCount: players.length
+            child:  ValueListenableBuilder(
+            valueListenable: controller.playerSoccerList,
+            builder:(_, list, __) => ListView.separated(
+                    itemBuilder: (_, index) {
+                      return ItemPlayerInTeam(
+                          player: list[index],
+                          teams: teams,
+                          updatePlayerSoccer: (playerSoccer, result) {
+                            controller.savePlayerSoccer(playerSoccer, index).then(result);
+                          });
+                    }, 
+                    separatorBuilder: (_, __) => Divider(), 
+                    itemCount: list.length
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );
