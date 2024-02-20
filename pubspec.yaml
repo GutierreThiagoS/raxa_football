@@ -65,15 +65,15 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/camisa_azul.png
-     - assets/camisa_br.png
-     - assets/camisa_ce.png
-     - assets/camisa_preto.png
-     - assets/camisa_verde.png
-     - assets/camisa_vermelho.png
-     - assets/bola.png
+     - assets/team/camisa_azul.png
+     - assets/team/camisa_br.png
+     - assets/team/camisa_ce.png
+     - assets/team/camisa_preto.png
+     - assets/team/camisa_verde.png
+     - assets/team/camisa_vermelho.png
+     - assets/team/sem_camisa.png
      - assets/bolaf.png
-     - assets/sem_camisa.png
+     - assets/bola.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

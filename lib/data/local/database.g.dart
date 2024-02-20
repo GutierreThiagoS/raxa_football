@@ -167,15 +167,19 @@ class _$TeamDao extends TeamDao {
   }
 
   @override
-  Future<List<Team>> getTeamInName(String name) async {
-    return _queryAdapter.queryList('SELECT * FROM Team WHERE name = ?1',
+  Future<List<Team>> getTeamInName(
+    String name,
+    String image,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Team WHERE name = ?1 AND image = ?2',
         mapper: (Map<String, Object?> row) => Team(
             id: row['id'] as int?,
             name: row['name'] as String,
             image: row['image'] as String,
             gol: row['gol'] as int,
             totalGolGames: row['totalGolGames'] as int),
-        arguments: [name]);
+        arguments: [name, image]);
   }
 
   @override

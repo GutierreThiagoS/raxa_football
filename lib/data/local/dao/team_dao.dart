@@ -14,8 +14,8 @@ abstract class TeamDao {
   @Query('SELECT * FROM Team')
   Future<List<Team>> getAll();
 
-  @Query('SELECT * FROM Team WHERE name = :name')
-  Future<List<Team>> getTeamInName(String name);
+  @Query('SELECT * FROM Team WHERE name = :name AND image = :image')
+  Future<List<Team>> getTeamInName(String name, String image);
 
   @Query('SELECT * FROM Team WHERE id IN (:teams)')
   Future<List<Team>> getTeamInGame(List<int> teams);

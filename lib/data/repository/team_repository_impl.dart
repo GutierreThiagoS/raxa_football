@@ -14,9 +14,9 @@ class TeamRepositoryImpl extends TeamRepository {
       if(list.isNotEmpty) {
         return list;
       } else {
-        await teamDao.insertItem(Team(name: "Time 1", image: "assets/camisa_ce.png"));
-        await teamDao.insertItem(Team(name: "Time 2", image: "assets/sem_camisa.png"));
-        await teamDao.insertItem(Team(name: "Time 3", image: "assets/camisa_azul.png"));
+        await teamDao.insertItem(Team(name: "Time 1", image: "assets/team/camisa_ce.png"));
+        await teamDao.insertItem(Team(name: "Time 2", image: "assets/team/sem_camisa.png"));
+        await teamDao.insertItem(Team(name: "Time 3", image: "assets/team/camisa_azul.png"));
         return await teamDao.getAll();
       }
     } catch (e) {
@@ -30,12 +30,12 @@ class TeamRepositoryImpl extends TeamRepository {
     try {
       final database = await $FloorAppDatabase.databaseBuilder('app_database_raxa.db').build();
       final teamDao = database.teamDao;
-      final teamInName = await teamDao.getTeamInName(team.name);
+      final teamInName = await teamDao.getTeamInName(team.name, team.image);
       print("teamInName $teamInName");
       if (teamInName.isEmpty) {
         if (team.id == null) {
           await teamDao.insertItem(team);
-          final teamInNameInsert = await teamDao.getTeamInName(team.name);
+          final teamInNameInsert = await teamDao.getTeamInName(team.name, team.image);
           return teamInNameInsert.first;
         } else {
           await teamDao.updateItem(team);

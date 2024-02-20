@@ -21,8 +21,10 @@ class MyTeamController {
 
   Future<void> saveTeam(Team team, int index) async {
     final teamSave = await _repository.saveTeam(team);
+    print("team $team teamSave $teamSave");
     if (teamSave != null) {
       teamList.value[index] = teamSave;
+      teamList.notifyListeners();
     }
   }
 

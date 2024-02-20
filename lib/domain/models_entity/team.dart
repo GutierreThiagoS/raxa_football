@@ -13,7 +13,7 @@ class Team {
   Team({
     this.id,
     required this.name,
-    this.image = "assets/camisa_ce.png",
+    this.image = "assets/team/camisa_ce.png",
     this.gol = 0,
     this.totalGolGames = 0
   });

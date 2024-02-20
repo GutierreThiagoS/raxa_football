@@ -38,9 +38,7 @@ class _ListFootballPlayerState extends State<ListFootballPlayer> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
       children: [
         Card(
           child: Container(

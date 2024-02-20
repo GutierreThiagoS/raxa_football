@@ -47,7 +47,7 @@ class _MyTeamsPageState extends State<MyTeamsPage> {
                 itemBuilder: (_, index) {
                   return ItemTeam(team: value[index], saveTeam: (value) {
                     controller.saveTeam(value, index);
-                  });
+                  }, imageTeams: value.map((e) => e.image).toList());
                 },
                 separatorBuilder: (_, __) => const Divider(),
                 itemCount: value.length

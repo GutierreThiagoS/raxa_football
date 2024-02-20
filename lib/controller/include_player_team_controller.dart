@@ -17,6 +17,10 @@ class IncludePlayerTeamController {
   Future<void> getAllPlayers() async {
     playerSoccerList.value =  await _repository.getAllPlayerSoccer();
   }
+
+  Future<List<PlayerSoccer>> getAllPlayersValue() async {
+    return await _repository.getAllPlayerSoccer();
+  }
   
   Future<PlayerSoccer?> savePlayer(int teamId) async {
     print("savePlayer player $player");
@@ -28,7 +32,7 @@ class IncludePlayerTeamController {
     final savePlayer = await _repository.savePlayerSoccer(item);
     print("savePlayer savePlayer $savePlayer");
 
-    if (savePlayer != null) {
+    if (savePlayer != null && index != -1) {
       playerSoccerList.value[index] = savePlayer;
     }
     return savePlayer;

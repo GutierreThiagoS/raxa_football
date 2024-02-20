@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:football/controller/game_team_controller.dart';
+import 'package:football/controller/include_player_team_controller.dart';
 import 'package:football/data/repository/game_repository_impl.dart';
+import 'package:football/data/repository/player_soccer_repository_impl.dart';
 import 'package:football/framework/views/game_football/list_football_player.dart';
 
 class GameTeamsView extends StatefulWidget {
@@ -12,11 +16,59 @@ class GameTeamsView extends StatefulWidget {
 
 class _GameTeamsViewState extends State<GameTeamsView> {
   final controller = GameTeamsController(GameRepositoryImpl());
+  final controllerPlayer = IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
 
   @override
   void initState() {
     super.initState();
-    controller.getGameData();
+    Future.wait([controller.getGameData()]);
+  }
+
+  Future<void> _randomPlayer() async {
+    final players = await controllerPlayer.getAllPlayersValue();
+    if(players.length >= 10) {
+      if (
+        controller.gameAndTeams.value != null
+          && controller.gameAndTeams.value!.teamAndPlayers1.players.isNotEmpty
+          && controller.gameAndTeams.value!.teamAndPlayers2.players.isNotEmpty
+      ) {
+        for (var player in controller.gameAndTeams.value!.teamAndPlayers1.players) {
+          await controllerPlayer.removerPlayerInTeam(player);
+        }
+        for (var player in controller.gameAndTeams.value!.teamAndPlayers2.players) {
+          await controllerPlayer.removerPlayerInTeam(player);
+        }
+        controller.gameAndTeams.value!.teamAndPlayers1.players = [];
+        controller.gameAndTeams.value!.teamAndPlayers2.players = [];
+        controller.notifyListeners();
+      }
+      while((
+          (controller.gameAndTeams.value?.teamAndPlayers1.players.length??0) +
+              (controller.gameAndTeams.value?.teamAndPlayers2.players.length??0)
+      ) < 10) {
+        await _randomPlayerTeam(
+            (controller.gameAndTeams.value?.teamAndPlayers1.players.length??0) < 5
+                ? controller.gameAndTeams.value?.teamAndPlayers1.team.id
+                : controller.gameAndTeams.value?.teamAndPlayers2.team.id
+        );
+      }
+    }
+  }
+
+  Future<void> _randomPlayerTeam(int? teamId) async {
+    if (teamId != null) {
+
+      final playersNotInTeam = await controllerPlayer.getAllPlayersNotTeam();
+      final random = Random();
+      final i = random.nextInt(playersNotInTeam.length);
+
+      final itemRandom = playersNotInTeam.removeAt(i);
+
+      itemRandom.idTeam = teamId;
+      await controllerPlayer.savePlayerSoccer(itemRandom, -1);
+      await controller.getGameData();
+      controller.notifyListeners();
+    }
   }
 
   @override
@@ -40,6 +92,12 @@ class _GameTeamsViewState extends State<GameTeamsView> {
         valueListenable: controller.gameAndTeams,
         builder: (_, game, __) {
           if (game != null) {
+            if(game.game.initGame) {
+              controller.initGame(game.game, false).then((value) {
+                controller.startTimer();
+              });
+            }
+
             return Column(
               children: [
                 Container(
@@ -48,7 +106,7 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                       EdgeInsets.only(top: 30, bottom: 20, left: 10, right: 10),
                   child: Row(
                     children: [
-                      Expanded(child: Image.asset("assets/camisa_ce.png")),
+                      Expanded(child: Image.asset(game.teamAndPlayers1.team.image)),
                       Expanded(
                         child: Column(
                           children: [
@@ -85,9 +143,17 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black45));
                                 }),
-                            ElevatedButton(
+                            game.game.initGame
+                                ?  ElevatedButton(
                                 onPressed: () {
-                                  controller.initGame(game.game).then((value) {
+                                  controller.initGame(game.game, true).then((value) {
+                                    controller.startTimer();
+                                  });
+                                },
+                                child: Icon(Icons.pause))
+                                : ElevatedButton(
+                                onPressed: () {
+                                  controller.initGame(game.game, true).then((value) {
                                     controller.startTimer();
                                   });
                                 },
@@ -95,13 +161,14 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                           ],
                         ),
                       ),
-                      Expanded(child: Image.asset("assets/sem_camisa.png")),
+                      Expanded(child: Image.asset(game.teamAndPlayers2.team.image)),
                     ],
                   ),
                 ),
                 Row(
                   children: [
                     Expanded(
+                      flex: 1,
                       child: ListFootballPlayer(
                         game: game.game,
                         title: game.teamAndPlayers1.team.name,
@@ -110,12 +177,12 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                         refresh: (list) {
                           controller.gameAndTeams.value?.teamAndPlayers1.players
                               .addAll(list);
-                          controller.gameAndTeams.notifyListeners();
+                          controller.notifyListeners();
                         },
                         removerPlayer: (player) {
                           controller.gameAndTeams.value?.teamAndPlayers1.players
                               .remove(player);
-                          controller.gameAndTeams.notifyListeners();
+                          controller.notifyListeners();
                         },
                         playerGol: (player) {
                           controller.registerGolGame(
@@ -126,6 +193,7 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                       ),
                     ),
                     Expanded(
+                      flex: 1,
                       child: ListFootballPlayer(
                         title: game.teamAndPlayers2.team.name,
                         players: game.teamAndPlayers2.players,
@@ -134,12 +202,12 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                         refresh: (list) {
                           controller.gameAndTeams.value?.teamAndPlayers2.players
                               .addAll(list);
-                          controller.gameAndTeams.notifyListeners();
+                          controller.notifyListeners();
                         },
                         removerPlayer: (player) {
                           controller.gameAndTeams.value?.teamAndPlayers2.players
                               .remove(player);
-                          controller.gameAndTeams.notifyListeners();
+                          controller.notifyListeners();
                         },
                         playerGol: (player) {
                           controller.registerGolGame(
@@ -150,6 +218,24 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                       ),
                     )
                   ],
+                ),
+                Container(
+                  padding: EdgeInsets.all(15),
+                  child: ElevatedButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                              game.teamAndPlayers1.players.isEmpty && game.teamAndPlayers2.players.isEmpty
+                              ? "Sortear" : "Sortear Novamente"),
+                          SizedBox(width: 10,),
+                          Icon(Icons.social_distance_rounded)
+                        ],
+                      ),
+                      onPressed: () {
+                        _randomPlayer();
+                      }
+                    ),
                 )
               ],
             );

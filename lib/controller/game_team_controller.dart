@@ -14,17 +14,19 @@ class GameTeamsController {
   GameTeamsController(this._repository);
 
   var gameAndTeams = ValueNotifier<GameAndTeams?>(null);
-  var timerGame = ValueNotifier<int>(10 *  60);
+  var timerGame = ValueNotifier<int>(10 * 60);
 
   Future<void> getGameData() async {
     gameAndTeams.value = await _repository.getGameAndTeams();
-    timerGame.value = (gameAndTeams.value?.game.minuteTimeGame??10)  *  60;
+    timerGame.value = gameAndTeams.value?.game.minuteTimeGame??(10 * 60);
   }
 
-  Future<void> initGame(Game game) async {
-    final initGame = await _repository.initGame(game);
-    if (initGame != null) {
-      gameAndTeams.value?.game = initGame;
+  Future<void> initGame(Game game, bool isRefresh) async {
+    if(isRefresh || game.dateTimeInit == "") {
+      final initGame = await _repository.initGame(game);
+      if (initGame != null) {
+        gameAndTeams.value?.game = initGame;
+      }
     }
   }
 
@@ -40,7 +42,7 @@ class GameTeamsController {
 
       if (index != null && index != -1) {
         gameAndTeams.value?.teamAndPlayers1.players[index] = player;
-        gameAndTeams.notifyListeners();
+        notifyListeners();
       }
     } else {
       gameAndTeams.value?.teamAndPlayers2.team = team;
@@ -48,7 +50,7 @@ class GameTeamsController {
       print("index2: $index");
       if (index != null && index != -1) {
         gameAndTeams.value?.teamAndPlayers2.players[index] = player;
-        gameAndTeams.notifyListeners();
+        notifyListeners();
       }
     }
   }
@@ -67,6 +69,10 @@ class GameTeamsController {
         }
       },
     );
+  }
+
+  void notifyListeners() {
+    gameAndTeams.notifyListeners();
   }
 
 }

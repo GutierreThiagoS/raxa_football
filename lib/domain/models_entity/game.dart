@@ -22,7 +22,7 @@ class Game {
     required this.idTeam2,
     this.dateTimeInit = "",
     this.dateTimeFinish = "",
-    this.minuteTimeGame = 10,
+    this.minuteTimeGame = 10 * 60,
     this.time = 1,
     this.maxTime = 2,
     required this.dateTimeCreated,

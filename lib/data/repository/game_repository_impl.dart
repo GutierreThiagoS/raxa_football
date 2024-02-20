@@ -124,14 +124,13 @@ class GameRepositoryImpl extends GameRepository {
       final players = await dao.getAll();
 
       if(players.isEmpty) {
-        for (var i = 1; i <= 10; i++) {
+        for (var i = 1; i <= 15; i++) {
           dao.insertItem(PlayerSoccer(name: "Jogador $i"));
         }
       }
 
     } catch (e) {
       print("getPlayerSoccer failed $e");
-
     }
   }
 
