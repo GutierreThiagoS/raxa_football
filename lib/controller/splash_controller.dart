@@ -11,8 +11,8 @@ class SplashController {
 
   Future<void> syncData() async {
     await _teamRepository.getAllTeam();
-    await _gameRepository.getGameData();
     await _gameRepository.getPlayerSoccer();
+    await _gameRepository.getGameData();
   }
 
 }

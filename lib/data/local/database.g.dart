@@ -67,6 +67,8 @@ class _$AppDatabase extends AppDatabase {
 
   GameDao? _gameDaoInstance;
 
+  PlayerInTeamDao? _playerInTeamDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -94,6 +96,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `Team` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `gol` INTEGER NOT NULL, `totalGolGames` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Game` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `idTeam1` INTEGER NOT NULL, `idTeam2` INTEGER NOT NULL, `dateTimeInit` TEXT NOT NULL, `dateTimeFinish` TEXT NOT NULL, `dateTimeCreated` TEXT NOT NULL, `minuteTimeGame` INTEGER NOT NULL, `time` INTEGER NOT NULL, `maxTime` INTEGER NOT NULL, `initGame` INTEGER NOT NULL, `finished` INTEGER NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `PlayerInTeam` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `gameId` INTEGER NOT NULL, `playerId` INTEGER NOT NULL, `teamId` INTEGER NOT NULL, `gol` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -115,6 +119,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   GameDao get gameDao {
     return _gameDaoInstance ??= _$GameDao(database, changeListener);
+  }
+
+  @override
+  PlayerInTeamDao get playerInTeamDao {
+    return _playerInTeamDaoInstance ??=
+        _$PlayerInTeamDao(database, changeListener);
   }
 }
 
@@ -383,6 +393,23 @@ class _$GameDao extends GameDao {
   }
 
   @override
+  Future<List<Game>> getAllNoFinish() async {
+    return _queryAdapter.queryList('SELECT * FROM Game WHERE finished = 0',
+        mapper: (Map<String, Object?> row) => Game(
+            id: row['id'] as int?,
+            idTeam1: row['idTeam1'] as int,
+            idTeam2: row['idTeam2'] as int,
+            dateTimeInit: row['dateTimeInit'] as String,
+            dateTimeFinish: row['dateTimeFinish'] as String,
+            minuteTimeGame: row['minuteTimeGame'] as int,
+            time: row['time'] as int,
+            maxTime: row['maxTime'] as int,
+            dateTimeCreated: row['dateTimeCreated'] as String,
+            initGame: (row['initGame'] as int) != 0,
+            finished: (row['finished'] as int) != 0));
+  }
+
+  @override
   Future<Game?> findById(int id) async {
     return _queryAdapter.query('SELECT * FROM Game WHERE id = ?1 LIMIT 1',
         mapper: (Map<String, Object?> row) => Game(
@@ -409,6 +436,79 @@ class _$GameDao extends GameDao {
   @override
   Future<int> updateItem(Game item) {
     return _gameUpdateAdapter.updateAndReturnChangedRows(
+        item, OnConflictStrategy.abort);
+  }
+}
+
+class _$PlayerInTeamDao extends PlayerInTeamDao {
+  _$PlayerInTeamDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _playerInTeamInsertionAdapter = InsertionAdapter(
+            database,
+            'PlayerInTeam',
+            (PlayerInTeam item) => <String, Object?>{
+                  'id': item.id,
+                  'gameId': item.gameId,
+                  'playerId': item.playerId,
+                  'teamId': item.teamId,
+                  'gol': item.gol
+                }),
+        _playerInTeamUpdateAdapter = UpdateAdapter(
+            database,
+            'PlayerInTeam',
+            ['id'],
+            (PlayerInTeam item) => <String, Object?>{
+                  'id': item.id,
+                  'gameId': item.gameId,
+                  'playerId': item.playerId,
+                  'teamId': item.teamId,
+                  'gol': item.gol
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<PlayerInTeam> _playerInTeamInsertionAdapter;
+
+  final UpdateAdapter<PlayerInTeam> _playerInTeamUpdateAdapter;
+
+  @override
+  Future<List<PlayerInTeam>> getAll() async {
+    return _queryAdapter.queryList('SELECT * FROM PlayerInTeam',
+        mapper: (Map<String, Object?> row) => PlayerInTeam(
+            id: row['id'] as int?,
+            gameId: row['gameId'] as int,
+            playerId: row['playerId'] as int,
+            teamId: row['teamId'] as int,
+            gol: row['gol'] as int));
+  }
+
+  @override
+  Future<PlayerInTeam?> findPlayerInTeam(
+    int gameId,
+    int playerId,
+    int teamId,
+  ) async {
+    return _queryAdapter.query(
+        'SELECT * FROM PlayerInTeam WHERE gameId = ?1 AND playerId = ?2 AND teamId = ?3 LIMIT 1',
+        mapper: (Map<String, Object?> row) => PlayerInTeam(id: row['id'] as int?, gameId: row['gameId'] as int, playerId: row['playerId'] as int, teamId: row['teamId'] as int, gol: row['gol'] as int),
+        arguments: [gameId, playerId, teamId]);
+  }
+
+  @override
+  Future<int> insertItem(PlayerInTeam item) {
+    return _playerInTeamInsertionAdapter.insertAndReturnId(
+        item, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<int> updateItem(PlayerInTeam item) {
+    return _playerInTeamUpdateAdapter.updateAndReturnChangedRows(
         item, OnConflictStrategy.abort);
   }
 }

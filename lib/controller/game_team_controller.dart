@@ -3,15 +3,18 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:football/domain/models/game_and_teams.dart';
+import 'package:football/domain/models/team_checkbox.dart';
 import 'package:football/domain/models_entity/game.dart';
 import 'package:football/domain/models_entity/player_soccer.dart';
 import 'package:football/domain/models_entity/team.dart';
 import 'package:football/domain/repository/game_repository.dart';
+import 'package:football/domain/repository/player_in_team_repository.dart';
 
 class GameTeamsController {
 
   final GameRepository _repository;
-  GameTeamsController(this._repository);
+  final PlayerInTeamRepository _playerInTeamRepository;
+  GameTeamsController(this._repository, this._playerInTeamRepository);
 
   var gameAndTeams = ValueNotifier<GameAndTeams?>(null);
   var timerGame = ValueNotifier<int>(10 * 60);
@@ -19,6 +22,10 @@ class GameTeamsController {
   Future<void> getGameData() async {
     gameAndTeams.value = await _repository.getGameAndTeams();
     timerGame.value = gameAndTeams.value?.game.minuteTimeGame??(10 * 60);
+  }
+
+  Future<List<Game>> getAllGame() async {
+    return await _repository.getAllGame();
   }
 
   Future<void> initGame(Game game, bool isRefresh) async {
@@ -55,6 +62,21 @@ class GameTeamsController {
     }
   }
 
+  Future<List<Team>> getTeams() async {
+    return await _repository.getTeams();
+  }
+
+  Future<void> newGameData(List<TeamCheckbox> list) async {
+    timer?.cancel();
+    gameAndTeams.value = await _repository.newGameData(list);
+    timerGame.value = gameAndTeams.value?.game.minuteTimeGame??(10 * 60);
+  }
+
+  Future<void> savePlayerInTeam(int teamId, int playerId) async {
+    await _playerInTeamRepository.savePlayerInTeam(teamId, playerId);
+  }
+
+  // ===================== TIMER =========================
   Timer? timer;
 
   void startTimer() {

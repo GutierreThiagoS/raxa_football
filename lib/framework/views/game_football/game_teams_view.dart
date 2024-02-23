@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:football/controller/game_team_controller.dart';
 import 'package:football/controller/include_player_team_controller.dart';
 import 'package:football/data/repository/game_repository_impl.dart';
+import 'package:football/data/repository/player_in_team_repository_impl.dart';
 import 'package:football/data/repository/player_soccer_repository_impl.dart';
+import 'package:football/framework/views/dialog/dialog_select_new_game.dart';
 import 'package:football/framework/views/game_football/list_football_player.dart';
 
 class GameTeamsView extends StatefulWidget {
@@ -15,7 +17,7 @@ class GameTeamsView extends StatefulWidget {
 }
 
 class _GameTeamsViewState extends State<GameTeamsView> {
-  final controller = GameTeamsController(GameRepositoryImpl());
+  final controller = GameTeamsController(GameRepositoryImpl(), PlayerInTeamRepositoryImpl());
   final controllerPlayer = IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
 
   @override
@@ -66,6 +68,7 @@ class _GameTeamsViewState extends State<GameTeamsView> {
 
       itemRandom.idTeam = teamId;
       await controllerPlayer.savePlayerSoccer(itemRandom, -1);
+      await controller.savePlayerInTeam(itemRandom.id??1, teamId);
       await controller.getGameData();
       controller.notifyListeners();
     }
@@ -97,7 +100,6 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                 controller.startTimer();
               });
             }
-
             return Column(
               children: [
                 Container(
@@ -111,10 +113,8 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                         child: Column(
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(
-                                  width: 15,
-                                ),
                                 Text(
                                   "${game.teamAndPlayers1.team.gol}",
                                   style: TextStyle(
@@ -236,7 +236,28 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                         _randomPlayer();
                       }
                     ),
-                )
+                ),
+                ElevatedButton(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Nova Partida"),
+                        SizedBox(width: 10,),
+                        Icon(Icons.autorenew_outlined)
+                      ],
+                    ),
+                    onPressed: () {
+                      controller.getTeams().then((list) {
+                        dialogSelectNewGame(
+                            context,
+                            list,
+                            (teamCheckboxList) {
+                              controller.newGameData(teamCheckboxList);
+                            }
+                        );
+                      });
+                    }
+                ),
               ],
             );
           } else {

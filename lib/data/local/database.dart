@@ -3,8 +3,10 @@ import 'dart:async';
 
 import 'package:floor/floor.dart';
 import 'package:football/data/local/dao/game_dao.dart';
+import 'package:football/data/local/dao/player_in_team_dao.dart';
 import 'package:football/data/local/dao/player_soccer_dao.dart';
 import 'package:football/data/local/dao/team_dao.dart';
+import 'package:football/domain/models_entity/player_in_team.dart';
 import 'package:football/domain/models_entity/player_soccer.dart';
 import 'package:football/domain/models_entity/team.dart';
 import 'package:football/domain/models_entity/game.dart';
@@ -17,7 +19,8 @@ part 'database.g.dart';
     entities: [
       PlayerSoccer,
       Team,
-      Game
+      Game,
+      PlayerInTeam
     ]
 )
 abstract class AppDatabase extends FloorDatabase {
@@ -29,4 +32,5 @@ abstract class AppDatabase extends FloorDatabase {
   TeamDao get teamDao;
   PlayerSoccerDao get playerSoccerDao;
   GameDao get gameDao;
+  PlayerInTeamDao get playerInTeamDao;
 }

@@ -14,6 +14,9 @@ abstract class GameDao {
   @Query('SELECT * FROM Game')
   Future<List<Game>> getAll();
 
+  @Query('SELECT * FROM Game WHERE finished = 0')
+  Future<List<Game>> getAllNoFinish();
+
   @Query('SELECT * FROM Game WHERE id = :id LIMIT 1')
   Future<Game?> findById(int id);
 }
