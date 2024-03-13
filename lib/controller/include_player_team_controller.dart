@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:football/domain/models/player_soccer_full.dart';
 import 'package:football/domain/models_entity/player_soccer.dart';
 import 'package:football/domain/repository/player_soccer_repository.dart';
 
@@ -12,10 +13,10 @@ class IncludePlayerTeamController {
   String player = "";
   setPlayer(value) => player = value;
 
-  ValueNotifier<List<PlayerSoccer>> playerSoccerList = ValueNotifier([]);
+  ValueNotifier<List<PlayerSoccerFull>> playerSoccerList = ValueNotifier([]);
 
-  Future<void> getAllPlayers() async {
-    playerSoccerList.value =  await _repository.getAllPlayerSoccer();
+  Future<void> getAllPlayerSoccerFull() async {
+    playerSoccerList.value = await _repository.getAllPlayerSoccerFull();
   }
 
   Future<List<PlayerSoccer>> getAllPlayersValue() async {
@@ -24,12 +25,12 @@ class IncludePlayerTeamController {
   
   Future<PlayerSoccer?> savePlayer(int teamId) async {
     print("savePlayer player $player");
-    return await _repository.savePlayerSoccer(PlayerSoccer(name: player, idTeam: teamId));
+    return await _repository.savePlayerSoccer(PlayerSoccer(name: player));
   }
 
-  Future<PlayerSoccer?> savePlayerSoccer(PlayerSoccer item, int index) async {
+  Future<PlayerSoccerFull?> savePlayerSoccerFull(PlayerSoccerFull item, int index) async {
     print("savePlayer player $player");
-    final savePlayer = await _repository.savePlayerSoccer(item);
+    final savePlayer = await _repository.savePlayerSoccerFull(item);
     print("savePlayer savePlayer $savePlayer");
 
     if (savePlayer != null && index != -1) {
@@ -38,7 +39,7 @@ class IncludePlayerTeamController {
     return savePlayer;
   }
 
-  Future<List<PlayerSoccer>> updateAllPlayerSoccer(List<PlayerSoccer> items) async {
+  Future<List<PlayerSoccer>> updateAllPlayerSoccer(List<PlayerSoccer> items, int idTeam) async {
     print("savePlayer player $player");
     List<PlayerSoccer> listUp = [];
     for (var item in items) {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:football/controller/include_player_team_controller.dart';
 import 'package:football/data/repository/player_soccer_repository_impl.dart';
-import 'package:football/domain/models_entity/player_soccer.dart';
+import 'package:football/domain/models/player_soccer_full.dart';
 import 'package:football/framework/components/outlined_text_filed.dart';
 
-void showDialogEditPlayer(BuildContext context, PlayerSoccer player, Function(PlayerSoccer) result) {
+void showDialogEditPlayer(BuildContext context, PlayerSoccerFull player, Function(PlayerSoccerFull) result) {
   final controller = IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
 
   showDialog(
@@ -52,7 +52,7 @@ void showDialogEditPlayer(BuildContext context, PlayerSoccer player, Function(Pl
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              result();
+              result(player);
               Navigator.of(context).pop();
             },
             child: Text('Cancelar'),

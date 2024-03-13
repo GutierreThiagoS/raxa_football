@@ -1,15 +1,15 @@
 
-import 'package:football/domain/models_entity/player_soccer.dart';
+import 'package:football/domain/models_entity/player_in_team.dart';
 import 'package:football/domain/models_entity/team.dart';
 
 class TeamAndPlayers {
   Team team;
-  List<PlayerSoccer> players;
+  List<PlayerInTeam> playerInTeams;
 
-  TeamAndPlayers({required this.team, required this.players});
+  TeamAndPlayers({required this.team, required this.playerInTeams});
 
   @override
   String toString() {
-    return "TeamAndPlayers({team: $team, players: $players})";
+    return "TeamAndPlayers({team: $team, players: $playerInTeams})";
   }
 }

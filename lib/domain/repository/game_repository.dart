@@ -1,8 +1,9 @@
 
 import 'package:football/domain/models/game_and_teams.dart';
+import 'package:football/domain/models/team_and_players.dart';
 import 'package:football/domain/models/team_checkbox.dart';
 import 'package:football/domain/models_entity/game.dart';
-import 'package:football/domain/models_entity/player_soccer.dart';
+import 'package:football/domain/models_entity/player_in_team.dart';
 import 'package:football/domain/models_entity/team.dart';
 
 abstract class GameRepository {
@@ -15,9 +16,11 @@ abstract class GameRepository {
 
   Future<void> getPlayerSoccer();
 
-  Future<void> registerGolGame(Team team, PlayerSoccer playerSoccer);
+  Future<void> registerGolGame(PlayerInTeam playerInTeam);
 
   Future<List<Team>> getTeams();
+
+  Future<List<TeamAndPlayers>> getTeamsInGame(int idGame);
 
   Future<GameAndTeams?> newGameData(List<TeamCheckbox> list);
 

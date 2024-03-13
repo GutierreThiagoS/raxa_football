@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:football/domain/models_entity/game.dart';
-import 'package:football/domain/models_entity/player_soccer.dart';
+import 'package:football/domain/models_entity/player_in_team.dart';
 import 'package:football/framework/views/dialog/dialog_confirm.dart';
 
 class ItemFootballPlayer extends StatefulWidget {
-  final PlayerSoccer player;
+  final PlayerInTeam player;
   final Game game;
   final Function() removerPlayer;
   final Function() marcarGol;
@@ -65,7 +65,7 @@ class _ItemFootballPlayerState extends State<ItemFootballPlayer> {
                             Icon(Icons.edit)
                           ])
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       ElevatedButton(
                           onPressed: () {
                             showDialogConfirm(
@@ -90,8 +90,16 @@ class _ItemFootballPlayerState extends State<ItemFootballPlayer> {
         );
       },
       child: Container(
-        padding: EdgeInsets.all(5),
-          child: Text(widget.player.name)
+        padding: const EdgeInsets.all(5),
+          child: Row(
+            children: [
+              Badge(
+                  label: Text("${widget.player.goals}"),
+                  alignment: Alignment.topLeft,
+                  child: Text("     ${widget.player.name}")
+              )
+            ],
+          )
       ),
     );
   }

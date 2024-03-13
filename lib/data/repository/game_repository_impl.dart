@@ -4,6 +4,7 @@ import 'package:football/domain/models/game_and_teams.dart';
 import 'package:football/domain/models/team_and_players.dart';
 import 'package:football/domain/models/team_checkbox.dart';
 import 'package:football/domain/models_entity/game.dart';
+import 'package:football/domain/models_entity/player_in_team.dart';
 import 'package:football/domain/models_entity/player_soccer.dart';
 import 'package:football/domain/models_entity/team.dart';
 import 'package:football/domain/repository/game_repository.dart';
@@ -60,7 +61,7 @@ class GameRepositoryImpl extends GameRepository {
 
       if(game != null) {
         final teamDao = database.teamDao;
-        final playerDao = database.playerSoccerDao;
+        final playerDao = database.playerInTeamDao;
         final teams = await teamDao.getTeamInGame([game.idTeam1, game.idTeam2]);
 
         if(teams.length > 1) {
@@ -70,11 +71,11 @@ class GameRepositoryImpl extends GameRepository {
               game: game,
               teamAndPlayers1: TeamAndPlayers(
                   team: teamFirst,
-                  players: await playerDao.getAllInTeam(teamFirst.id??-2)
+                  playerInTeams: await playerDao.getAllInIdGameAndTeamId(game.id!, teamFirst.id??-1)
               ),
               teamAndPlayers2: TeamAndPlayers(
                   team: teamSecond,
-                  players: await playerDao.getAllInTeam(teamSecond.id??-2)
+                  playerInTeams: await playerDao.getAllInIdGameAndTeamId(game.id!, teamSecond.id??-1)
               )
           );
         } else {
@@ -97,7 +98,7 @@ class GameRepositoryImpl extends GameRepository {
       final dao = database.gameDao;
 
       DateTime dateInit = DateTime.now();
-      DateTime dateFinal = dateInit.add(Duration(minutes: game.time));
+      DateTime dateFinal = dateInit.add(Duration(seconds: game.minuteTimeGame));
       DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
 
       game.dateTimeInit = dateFormat.format(dateInit);
@@ -138,14 +139,12 @@ class GameRepositoryImpl extends GameRepository {
   }
 
   @override
-  Future<void> registerGolGame(Team team, PlayerSoccer playerSoccer) async {
+  Future<void> registerGolGame(PlayerInTeam playerInTeam) async {
     try {
       final database = await $FloorAppDatabase.databaseBuilder('app_database_raxa.db').build();
-      final dao = database.playerSoccerDao;
-      final teamDao = database.teamDao;
+      final dao = database.playerInTeamDao;
 
-      await dao.updateItem(playerSoccer);
-      await teamDao.updateItem(team);
+      await dao.updateItem(playerInTeam);
     } catch (e) {
       print("registerGolGame failed $e");
     }
@@ -199,7 +198,6 @@ class GameRepositoryImpl extends GameRepository {
 
           final teamList = await teamDao.getAll();
           for (var element in teamList) {
-            element.gol = 0;
             await teamDao.updateItem(element);
           }
           return await getGameAndTeams();
@@ -214,7 +212,6 @@ class GameRepositoryImpl extends GameRepository {
 
           final teamList = await teamDao.getAll();
           for (var element in teamList) {
-            element.gol = 0;
             await teamDao.updateItem(element);
           }
           return await getGameAndTeams();
@@ -239,6 +236,26 @@ class GameRepositoryImpl extends GameRepository {
       return await dao.getAll();
     } catch (e) {
       print("Error getAllGame $e");
+      return [];
+    }
+  }
+
+  @override
+  Future<List<TeamAndPlayers>> getTeamsInGame(int idGame) async {
+    try {
+      final database = await $FloorAppDatabase.databaseBuilder('app_database_raxa.db').build();
+      final dao = database.playerInTeamDao;
+
+      final teams = await dao.getIdTeamsInPlayerInTeam(idGame);
+      final players = teams.map((e) async {
+        return TeamAndPlayers(
+          team: e,
+          playerInTeams: await dao.getAllInIdGameAndTeamId(idGame, e.id??0)
+        );
+      }).toList();
+      return await Future.wait(players);
+    } catch (e) {
+      print("getTeams failed $e");
       return [];
     }
   }

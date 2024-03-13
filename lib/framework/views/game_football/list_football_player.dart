@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:football/controller/include_player_team_controller.dart';
+import 'package:football/controller/player_in_team_controller.dart';
+import 'package:football/data/repository/player_in_team_repository_impl.dart';
 import 'package:football/data/repository/player_soccer_repository_impl.dart';
 import 'package:football/domain/models_entity/game.dart';
-import 'package:football/domain/models_entity/player_soccer.dart';
+import 'package:football/domain/models_entity/player_in_team.dart';
 import 'package:football/framework/views/game_football/item_football_player.dart';
 import 'package:football/framework/views/dialog/dialog_add_player_in_team.dart';
 
 class ListFootballPlayer extends StatefulWidget {
   final String title;
-  final List<PlayerSoccer> players;
+  final List<PlayerInTeam> players;
   final int teamId;
   final Game game;
-  final Function(List<PlayerSoccer>) refresh;
-  final Function(PlayerSoccer) removerPlayer;
-  final Function(PlayerSoccer) playerGol;
+  final Function(List<PlayerInTeam>) refresh;
+  final Function(PlayerInTeam) removerPlayer;
+  final Function(PlayerInTeam) playerGol;
 
   const ListFootballPlayer({
     super.key,
@@ -31,7 +33,8 @@ class ListFootballPlayer extends StatefulWidget {
 }
 
 class _ListFootballPlayerState extends State<ListFootballPlayer> {
-  final controller = IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
+  final controller = PlayerInTeamController(PlayerInTeamRepositoryImpl());
+  final controllerPlayer = IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
 
   final isNewGamerPlayer = ValueNotifier<bool>(false);
 
@@ -42,11 +45,11 @@ class _ListFootballPlayerState extends State<ListFootballPlayer> {
       children: [
         Card(
           child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width / 2,
             child: Text(
               widget.title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
         ),
@@ -74,19 +77,20 @@ class _ListFootballPlayerState extends State<ListFootballPlayer> {
         widget.players.length < 5
             ? TextButton(
             onPressed: () {
-              controller.getAllPlayersNotTeam().then((list) {
+              controllerPlayer.getAllPlayersNotTeam().then((list) {
                 showDialogAddPlayerInTeam(
                     context,
                     list,
                     5 - widget.players.length,
                     widget.teamId,
                     (list) {
-                      controller.updateAllPlayerSoccer(list).then((value) => widget.refresh(value));
+                      controller.updateAllPlayerSoccer(list, widget.teamId)
+                          .then((value) => widget.refresh(value));
                     }
                 );
               });
             },
-            child: Text("Adicionar")
+            child: const Text("Adicionar")
         )
             :Container()
       ],

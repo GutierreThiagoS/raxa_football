@@ -7,13 +7,14 @@ class PlayerInTeam {
   int? id;
   int gameId;
   int playerId;
+  String name;
   int teamId;
-  int gol;
+  int goals;
 
-  PlayerInTeam({this.id, required this.gameId, required this.playerId, required this.teamId, this.gol = 0});
+  PlayerInTeam({this.id, required this.gameId, required this.playerId, required this.name, required this.teamId, this.goals = 0});
 
   @override
   String toString() {
-    return "  PlayerInTeam({id: $id, gameId: $gameId, playerId: $playerId, teamId: $teamId, gol: $gol})";
+    return "  PlayerInTeam({id: $id, gameId: $gameId, playerId: $playerId, name: $name, teamId: $teamId, gol: $goals})";
   }
 }

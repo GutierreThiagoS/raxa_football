@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:football/controller/game_team_controller.dart';
 import 'package:football/data/repository/game_repository_impl.dart';
-import 'package:football/data/repository/player_in_team_repository_impl.dart';
 import 'package:football/domain/models_entity/game.dart';
 import 'package:football/framework/views/my_games_page/item_game_view_holder.dart';
 
@@ -14,7 +13,7 @@ class MyGamesPage extends StatefulWidget {
 
 class _MyGamesPageState extends State<MyGamesPage> {
 
-  final controller = GameTeamsController(GameRepositoryImpl(), PlayerInTeamRepositoryImpl());
+  final controller = GameTeamsController(GameRepositoryImpl());
 
   var games = ValueNotifier<List<Game>>([]);
 

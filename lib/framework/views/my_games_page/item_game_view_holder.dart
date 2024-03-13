@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:football/controller/game_team_controller.dart';
 import 'package:football/domain/models_entity/game.dart';
+import 'package:football/framework/utils/functions.dart';
 
 class ItemGameViewHolder extends StatelessWidget {
   final Game game;
@@ -11,11 +12,11 @@ class ItemGameViewHolder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder(
-          future: controller.getTeams(),
+          future: controller.getTeamsInGame(game.id??1),
           builder: (context, snapshot) {
             if (snapshot.data?.isNotEmpty?? false) {
-              final team1 = snapshot.data!.firstWhere((e) => e.id == game.idTeam1);
-              final team2 = snapshot.data!.firstWhere((e) => e.id == game.idTeam2);
+              final team1 = snapshot.data!.firstWhere((e) => e.team.id == game.idTeam1);
+              final team2 = snapshot.data!.firstWhere((e) => e.team.id == game.idTeam2);
               return Container(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -23,7 +24,7 @@ class ItemGameViewHolder extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                            child: Image.asset(team1.image)
+                            child: Image.asset(team1.team.image)
                         ),
                         Expanded(
                           flex: 2,
@@ -31,7 +32,7 @@ class ItemGameViewHolder extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "${team1.gol}",
+                                "${sumByGoal(team1)}",
                                 style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold),
@@ -42,7 +43,7 @@ class ItemGameViewHolder extends StatelessWidget {
                                 padding: EdgeInsets.all(8),
                               ),
                               Text(
-                                "${team2.gol}",
+                                "${sumByGoal(team2)}",
                                 style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold),
@@ -51,7 +52,7 @@ class ItemGameViewHolder extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                            child: Image.asset(team2.image)),
+                            child: Image.asset(team2.team.image)),
                       ],
                     ),
                     SizedBox(height: 10),

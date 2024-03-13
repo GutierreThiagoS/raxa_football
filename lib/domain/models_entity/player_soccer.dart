@@ -7,14 +7,12 @@ class PlayerSoccer {
   int? id;
   String name;
   int level;
-  int gols;
-  int partidas;
-  int idTeam;
+  bool presented;
 
-  PlayerSoccer({this.id, required this.name, this.level = 3, this.gols = 0, this.partidas = 0, this.idTeam = -1});
+  PlayerSoccer({this.id, required this.name, this.level = 3, this.presented = true});
 
   @override
   String toString() {
-    return "PlayerSoccer({id: $id, name: $name, level: $level, gols: $gols, partidas: $partidas, idTeam: $idTeam})";
+    return "PlayerSoccer({id: $id, name: $name, level: $level, presented: $presented})";
   }
 }

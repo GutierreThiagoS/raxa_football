@@ -30,7 +30,7 @@ class _IncludePlayerInTeamState extends State<IncludePlayerInTeam> {
         teams.addAll(value[0]);
       });
     });
-    controller.getAllPlayers();
+    controller.getAllPlayerSoccerFull();
   }
   
   @override
@@ -60,7 +60,8 @@ class _IncludePlayerInTeamState extends State<IncludePlayerInTeam> {
                           player: list[index],
                           teams: teams,
                           updatePlayerSoccer: (playerSoccer, result) {
-                            controller.savePlayerSoccer(playerSoccer, index).then(result);
+                            controller.savePlayerSoccerFull(playerSoccer, index)
+                                .then(result);
                           });
                     }, 
                     separatorBuilder: (_, __) => Divider(), 

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:football/domain/models/player_soccer_selected_team.dart';
 import 'package:football/domain/models_entity/player_soccer.dart';
 
 void showDialogAddPlayerInTeam(
@@ -10,7 +11,8 @@ void showDialogAddPlayerInTeam(
     Function(List<PlayerSoccer>) result
 ) {
 
-  ValueNotifier<List<PlayerSoccer>> players = ValueNotifier(listPlayers);
+  ValueNotifier<List<PlayerSoccerSelectedTeam>> players = ValueNotifier(
+      listPlayers.map((e) => PlayerSoccerSelectedTeam(player: e, teamId: 0)).toList());
 
   showDialog(
     context: context,
@@ -35,7 +37,7 @@ void showDialogAddPlayerInTeam(
                               children: [
                                 Expanded(
                                   child: Text(
-                                    list[index].name,
+                                    list[index].player.name,
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
@@ -43,18 +45,18 @@ void showDialogAddPlayerInTeam(
                                     ),
                                   ),
                                 ),
-                                Checkbox(value: list[index].idTeam != -1,
+                                Checkbox(value: list[index].teamId != 0,
                                     onChanged: (value) {
                                       print(value);
                                       if (value != null && value) {
-                                        if(players.value.where((element) => element.idTeam != -1).toList().length < max) {
-                                          list[index].idTeam = teamId;
+                                        if(players.value.where((element) => element.teamId != 0).toList().length < max) {
+                                          list[index].teamId = teamId;
                                           print(list[index]);
                                           players.value[index] = list[index];
                                           players.notifyListeners();
                                         }
                                       } else {
-                                        list[index].idTeam = -1;
+                                        list[index].teamId = 0;
                                         print(list[index]);
                                         players.value[index] = list[index];
                                         players.notifyListeners();
@@ -81,7 +83,10 @@ void showDialogAddPlayerInTeam(
           ),
           TextButton(
             onPressed: () {
-              result(players.value.where((element) => element.idTeam != -1).toList());
+              result(
+                  players.value.where((element) => element.teamId != 0).toList()
+                      .map((e) => e.player).toList()
+              );
               Navigator.of(context).pop();
             },
             child: Text('Adicionar'),
