@@ -55,6 +55,10 @@ class IncludePlayerTeamController {
     return await _repository.getAllPlayerSoccerNotTeam();
   }
 
+  Future<List<PlayerSoccer>> getAllPlayersNotTeamNotGameId(int gameId) async {
+    return await _repository.getAllPlayersNotTeamNotGameId(gameId);
+  }
+
   Future<PlayerSoccer?> removerPlayerInTeam(PlayerSoccer player) async {
     return await _repository.removerPlayerInTeam(player);
   }

@@ -42,10 +42,14 @@ class _MyGamesPageState extends State<MyGamesPage> {
             ),
           ),
           Expanded(
+            flex: 1,
             child:  ValueListenableBuilder(
               valueListenable: games,
               builder:(_, list, __) => ListView.separated(
+                shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
                   itemBuilder: (_, index) {
+                    print(list[index]);
                     return ItemGameViewHolder(
                         game: list[index],
                       controller: controller,

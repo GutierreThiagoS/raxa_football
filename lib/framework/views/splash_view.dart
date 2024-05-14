@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:football/controller/splash_controller.dart';
-import 'package:football/framework/components/custom_progress.dart';
 import 'package:football/data/repository/game_repository_impl.dart';
 import 'package:football/data/repository/team_repository_impl.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});
@@ -20,7 +20,7 @@ class SplashView extends StatelessWidget {
 
     return Container(
       color: Colors.white,
-      child: const CustomProgress(),
+      child: Lottie.asset('lottie/animation_soccer_flutter.json'),
     );
   }
 }

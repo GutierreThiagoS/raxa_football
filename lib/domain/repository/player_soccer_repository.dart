@@ -14,5 +14,7 @@ abstract class PlayerSoccerRepository {
 
   Future<List<PlayerSoccer>> getAllPlayerSoccerNotTeam();
 
+  Future<List<PlayerSoccer>> getAllPlayersNotTeamNotGameId(int gameId);
+
   Future<PlayerSoccer?> removerPlayerInTeam(PlayerSoccer playerSoccer);
 }

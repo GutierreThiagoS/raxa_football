@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:football/framework/views/create_football_player/create_football_player.dart';
 import 'package:football/framework/views/include_player_team/include_player_in_team.dart';
@@ -14,6 +16,20 @@ class MenuView extends StatefulWidget {
 
 class _MenuViewState extends State<MenuView> {
    ValueNotifier<int> indexCurrent = ValueNotifier<int>(0);
+
+   String randomBackground() {
+     final list =[
+       'assets/background_raxa.jpg',
+       'assets/background_raxa2.jpg',
+       'assets/background_raxa3.jpg',
+       'assets/background_raxa4.jpg',
+     ];
+
+     final random = Random();
+     final i = random.nextInt(list.length);
+
+     return list[i];
+   }
 
   final page = [
     const GameTeamsView(),
@@ -32,13 +48,18 @@ class _MenuViewState extends State<MenuView> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Raxa TI J.Sleiman'),
+          title: const Text('Raxa '),
         ),
         drawer: ValueListenableBuilder<int>(
           valueListenable: indexCurrent,
           builder: (_, i, __) {
             return NavigationDrawer(
-              children: [
+              onDestinationSelected: (i) {
+                indexCurrent.value = i;
+                Navigator.pop(context);
+              },
+              selectedIndex: i,
+              children: const [
                 ListTile(
                   dense: true,
                   title: Text(
@@ -70,17 +91,21 @@ class _MenuViewState extends State<MenuView> {
                   label: Text('Meus Jogos'),
                 ),
               ],
-              onDestinationSelected: (i) {
-                indexCurrent.value = i;
-                Navigator.pop(context);
-              },
-              selectedIndex: i,
             );
           }
         ),
         body: ValueListenableBuilder<int>(
           valueListenable: indexCurrent,
-          builder: (_, i, __) => page[i]
+          builder: (_, i, __) => Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(randomBackground()),
+                  fit: BoxFit.cover,
+                  opacity: 0.4
+                ),
+              ),
+              child: page[i]
+          )
         ),
       ),
     );

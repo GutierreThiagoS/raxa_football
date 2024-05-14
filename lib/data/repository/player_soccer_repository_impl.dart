@@ -130,6 +130,22 @@ class PlayerSoccerRepositoryImpl extends PlayerSoccerRepository {
   }
 
   @override
+  Future<List<PlayerSoccer>> getAllPlayersNotTeamNotGameId(int gameId) async {
+    try {
+      final database = await $FloorAppDatabase.databaseBuilder('app_database_raxa.db').build();
+      final dao = database.playerSoccerDao;
+
+      print("dao.getAllNotTeam() ${await dao.getAllNotTeam()}");
+
+      return await dao.getAllNotTeam();
+
+    } catch (e) {
+      print("Error: $e");
+      return [];
+    }
+  }
+
+  @override
   Future<PlayerSoccer?> removerPlayerInTeam(PlayerSoccer playerSoccer) async {
     try {
       final database = await $FloorAppDatabase.databaseBuilder('app_database_raxa.db').build();
@@ -147,7 +163,4 @@ class PlayerSoccerRepositoryImpl extends PlayerSoccerRepository {
     return null;
     }
   }
-
-
-
 }

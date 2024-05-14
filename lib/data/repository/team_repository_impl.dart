@@ -15,8 +15,8 @@ class TeamRepositoryImpl extends TeamRepository {
         return list;
       } else {
         await teamDao.insertItem(Team(name: "Time 1", image: "assets/team/camisa_ce.png"));
-        await teamDao.insertItem(Team(name: "Time 2", image: "assets/team/sem_camisa.png"));
-        await teamDao.insertItem(Team(name: "Time 3", image: "assets/team/camisa_azul.png"));
+        await teamDao.insertItem(Team(name: "Time 2", image: "assets/team/camisa_azul.png"));
+        await teamDao.insertItem(Team(name: "Time 3", image: "assets/team/camisa_verde.png"));
         return await teamDao.getAll();
       }
     } catch (e) {

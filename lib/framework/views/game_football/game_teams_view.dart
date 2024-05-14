@@ -20,8 +20,10 @@ class GameTeamsView extends StatefulWidget {
 
 class _GameTeamsViewState extends State<GameTeamsView> {
   final controller = GameTeamsController(GameRepositoryImpl());
-  final controllerPlayer = IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
-  final controllerPlayerInTeam = PlayerInTeamController(PlayerInTeamRepositoryImpl());
+  final controllerPlayer =
+      IncludePlayerTeamController(PlayerSoccerRepositoryImpl());
+  final controllerPlayerInTeam =
+      PlayerInTeamController(PlayerInTeamRepositoryImpl());
 
   @override
   void initState() {
@@ -31,38 +33,43 @@ class _GameTeamsViewState extends State<GameTeamsView> {
 
   Future<void> _randomPlayer() async {
     final players = await controllerPlayer.getAllPlayersValue();
-    if(players.length >= 10) {
-      if (
-        controller.gameAndTeams.value != null
-          && controller.gameAndTeams.value!.teamAndPlayers1.playerInTeams.isNotEmpty
-          && controller.gameAndTeams.value!.teamAndPlayers2.playerInTeams.isNotEmpty
-      ) {
-        for (var player in controller.gameAndTeams.value!.teamAndPlayers1.playerInTeams) {
+    if (players.length >= 10) {
+      if (controller.gameAndTeams.value != null &&
+          controller
+              .gameAndTeams.value!.teamAndPlayers1.playerInTeams.isNotEmpty &&
+          controller
+              .gameAndTeams.value!.teamAndPlayers2.playerInTeams.isNotEmpty) {
+        for (var player
+            in controller.gameAndTeams.value!.teamAndPlayers1.playerInTeams) {
           await controllerPlayerInTeam.removerPlayerInTeam(player);
         }
-        for (var player in controller.gameAndTeams.value!.teamAndPlayers2.playerInTeams) {
+        for (var player
+            in controller.gameAndTeams.value!.teamAndPlayers2.playerInTeams) {
           await controllerPlayerInTeam.removerPlayerInTeam(player);
         }
         controller.gameAndTeams.value!.teamAndPlayers1.playerInTeams = [];
         controller.gameAndTeams.value!.teamAndPlayers2.playerInTeams = [];
         controller.notifyListeners();
       }
-      while((
-          (controller.gameAndTeams.value?.teamAndPlayers1.playerInTeams.length??0) +
-              (controller.gameAndTeams.value?.teamAndPlayers2.playerInTeams.length??0)
-      ) < 10) {
-        await _randomPlayerTeam(
-            (controller.gameAndTeams.value?.teamAndPlayers1.playerInTeams.length??0) < 5
-                ? controller.gameAndTeams.value?.teamAndPlayers1.team.id
-                : controller.gameAndTeams.value?.teamAndPlayers2.team.id
-        );
+      while (((controller.gameAndTeams.value?.teamAndPlayers1.playerInTeams
+                      .length ??
+                  0) +
+              (controller.gameAndTeams.value?.teamAndPlayers2.playerInTeams
+                      .length ??
+                  0)) <
+          10) {
+        await _randomPlayerTeam((controller.gameAndTeams.value?.teamAndPlayers1
+                        .playerInTeams.length ??
+                    0) <
+                5
+            ? controller.gameAndTeams.value?.teamAndPlayers1.team.id
+            : controller.gameAndTeams.value?.teamAndPlayers2.team.id);
       }
     }
   }
 
   Future<void> _randomPlayerTeam(int? teamId) async {
     if (teamId != null) {
-
       final playersNotInTeam = await controllerPlayer.getAllPlayersNotTeam();
       print("playersNotInTeam $playersNotInTeam");
 
@@ -73,16 +80,15 @@ class _GameTeamsViewState extends State<GameTeamsView> {
       final itemRandom = playersNotInTeam.removeAt(i);
 
       print("itemRandom $itemRandom");
-      print("teamId $teamId");
-      // itemRandom.idTeam = teamId;
-      final savePlayer = await controllerPlayerInTeam.savePlayerInTeam(teamId, itemRandom.id??0);
+
+      final savePlayer = await controllerPlayerInTeam.savePlayerInTeam(
+          teamId, itemRandom.id ?? 0);
       print("savePlayer $savePlayer");
 
       if (savePlayer != null) {
         await controller.getGameData();
         controller.notifyListeners();
       }
-
     }
   }
 
@@ -106,7 +112,7 @@ class _GameTeamsViewState extends State<GameTeamsView> {
       valueListenable: controller.gameAndTeams,
       builder: (_, game, __) {
         if (game != null) {
-          if(game.game.initGame) {
+          if (game.game.initGame) {
             controller.initGame(game.game, false).then((value) {
               controller.startTimer(value);
             });
@@ -115,11 +121,12 @@ class _GameTeamsViewState extends State<GameTeamsView> {
             children: [
               Container(
                 color: Colors.black12,
-                padding:
-                    const EdgeInsets.only(top: 30, bottom: 20, left: 10, right: 10),
+                padding: const EdgeInsets.only(
+                    top: 30, bottom: 20, left: 10, right: 10),
                 child: Row(
                   children: [
-                    Expanded(child: Image.asset(game.teamAndPlayers1.team.image)),
+                    Expanded(
+                        child: Image.asset(game.teamAndPlayers1.team.image)),
                     Expanded(
                       child: Column(
                         children: [
@@ -129,19 +136,17 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                               Text(
                                 "${sumByGoal(game.teamAndPlayers1)}",
                                 style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 22, fontWeight: FontWeight.bold),
                               ),
                               Container(
                                 padding: const EdgeInsets.all(8),
-                                child: Image.asset("assets/bolaf.png",
-                                    height: 50),
+                                child:
+                                    Image.asset("assets/bolaf.png", height: 50),
                               ),
                               Text(
                                 "${sumByGoal(game.teamAndPlayers2)}",
                                 style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 22, fontWeight: FontWeight.bold),
                               )
                             ],
                           ),
@@ -154,25 +159,30 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black45));
                               }),
-                          game.game.initGame
-                              ?  ElevatedButton(
+                          ElevatedButton(
                               onPressed: () {
-                                controller.initGame(game.game, true).then((value) {
-                                  controller.startTimer(value);
-                                });
+                                if (
+                                game.teamAndPlayers1.playerInTeams.length == 5 &&
+                                    game.teamAndPlayers2.playerInTeams.length == 5
+                                ) {
+                                  controller
+                                      .initGame(game.game, true)
+                                      .then((value) {
+                                    controller.startTimer(value);
+                                  });
+                                }
                               },
-                              child: const Icon(Icons.pause))
-                              : ElevatedButton(
-                              onPressed: () {
-                                controller.initGame(game.game, true).then((value) {
-                                  controller.startTimer(value);
-                                });
-                              },
-                              child: const Icon(Icons.play_arrow))
+                              child: Icon(
+                                  game.game.initGame
+                                  ? Icons.refresh
+                                  : Icons.play_arrow
+                              )
+                          )
                         ],
                       ),
                     ),
-                    Expanded(child: Image.asset(game.teamAndPlayers2.team.image)),
+                    Expanded(
+                        child: Image.asset(game.teamAndPlayers2.team.image)),
                   ],
                 ),
               ),
@@ -186,12 +196,14 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                       players: game.teamAndPlayers1.playerInTeams,
                       teamId: game.teamAndPlayers1.team.id ?? -1,
                       refresh: (list) {
-                        controller.gameAndTeams.value?.teamAndPlayers1.playerInTeams
+                        controller
+                            .gameAndTeams.value?.teamAndPlayers1.playerInTeams
                             .addAll(list);
                         controller.notifyListeners();
                       },
                       removerPlayer: (player) {
-                        controller.gameAndTeams.value?.teamAndPlayers1.playerInTeams
+                        controller
+                            .gameAndTeams.value?.teamAndPlayers1.playerInTeams
                             .remove(player);
                         controller.notifyListeners();
                       },
@@ -208,12 +220,14 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                       game: game.game,
                       teamId: game.teamAndPlayers2.team.id ?? -1,
                       refresh: (list) {
-                        controller.gameAndTeams.value?.teamAndPlayers2.playerInTeams
+                        controller
+                            .gameAndTeams.value?.teamAndPlayers2.playerInTeams
                             .addAll(list);
                         controller.notifyListeners();
                       },
                       removerPlayer: (player) {
-                        controller.gameAndTeams.value?.teamAndPlayers2.playerInTeams
+                        controller
+                            .gameAndTeams.value?.teamAndPlayers2.playerInTeams
                             .remove(player);
                         controller.notifyListeners();
                       },
@@ -231,38 +245,38 @@ class _GameTeamsViewState extends State<GameTeamsView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                            game.teamAndPlayers1.playerInTeams.isEmpty && game.teamAndPlayers2.playerInTeams.isEmpty
-                            ? "Sortear" : "Sortear Novamente"),
-                        const SizedBox(width: 10,),
+                            game.teamAndPlayers1.playerInTeams.isEmpty
+                                && game.teamAndPlayers2.playerInTeams.isEmpty
+                            ? "Sortear"
+                            : "Sortear Novamente"),
+                        const SizedBox(
+                          width: 10,
+                        ),
                         const Icon(Icons.social_distance_rounded)
                       ],
                     ),
                     onPressed: () {
                       _randomPlayer();
-                    }
-                  ),
+                    }),
               ),
               ElevatedButton(
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text("Nova Partida"),
-                      SizedBox(width: 10,),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Icon(Icons.autorenew_outlined)
                     ],
                   ),
                   onPressed: () {
                     controller.getTeams().then((list) {
-                      dialogSelectNewGame(
-                          context,
-                          list,
-                          (teamCheckboxList) {
-                            controller.newGameData(teamCheckboxList);
-                          }
-                      );
+                      dialogSelectNewGame(context, list, (teamCheckboxList) {
+                        controller.newGameData(teamCheckboxList);
+                      });
                     });
-                  }
-              ),
+                  }),
             ],
           );
         } else {

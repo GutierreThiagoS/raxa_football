@@ -12,7 +12,8 @@ void showDialogAddPlayerInTeam(
 ) {
 
   ValueNotifier<List<PlayerSoccerSelectedTeam>> players = ValueNotifier(
-      listPlayers.map((e) => PlayerSoccerSelectedTeam(player: e, teamId: 0)).toList());
+      listPlayers.map((e) => PlayerSoccerSelectedTeam(player: e, teamId: 0)).toList()
+  );
 
   showDialog(
     context: context,
@@ -20,10 +21,9 @@ void showDialogAddPlayerInTeam(
       return AlertDialog(
         title: Text('Adicionar Jogador -> falta $max'),
         scrollable: true,
-        content: Container(
+        content: SizedBox(
             width: MediaQuery.of(context).size.width *  0.9,
             height: MediaQuery.of(context).size.height *  0.4,
-          child:  SingleChildScrollView(
             child: ValueListenableBuilder(
               valueListenable: players,
               builder: (_, list, __) {
@@ -31,14 +31,14 @@ void showDialogAddPlayerInTeam(
                 return ListView.separated(
                       itemBuilder: (_, index) {
                         return Container(
-                            padding: EdgeInsets.only(left: 15, right: 15),
+                            padding: const EdgeInsets.only(left: 15, right: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
                                   child: Text(
                                     list[index].player.name,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 2,
@@ -66,20 +66,19 @@ void showDialogAddPlayerInTeam(
                             )
                         );
                       },
-                    separatorBuilder: (_, __) => Divider(),
+                    separatorBuilder: (_, __) => const Divider(),
                     itemCount: list.length,
                     shrinkWrap: true,
                 );
               }
             ),
-          )
         ),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () {
@@ -89,7 +88,7 @@ void showDialogAddPlayerInTeam(
               );
               Navigator.of(context).pop();
             },
-            child: Text('Adicionar'),
+            child: const Text('Adicionar'),
           ),
         ],
       );

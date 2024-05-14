@@ -96,7 +96,7 @@ class _ItemPlayerInTeamState extends State<ItemPlayerInTeam> {
                           ),
                         ),
                       ),
-                      Switch(value: player.presented, onChanged: (e){
+                      /*Switch(value: player.presented, onChanged: (e){
                         player.presented = e;
                         widget.updatePlayerSoccer(player, (newPlayer) {
                           if (newPlayer != null) {
@@ -104,7 +104,7 @@ class _ItemPlayerInTeamState extends State<ItemPlayerInTeam> {
                           }
                         });
                       }),
-                      SizedBox(width: 20,),
+                      SizedBox(width: 20,),*/
                       DropdownButton<String>(
                           value: dropdownValue,
                           items: widget.teams.map<DropdownMenuItem<String>>((Team value) {
